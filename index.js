@@ -54,8 +54,25 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const randomId = Math.floor((Math.random() * 100)) + 5 // I do not want numbers lesser than 5 since the hardcoded array already contains those
     const person = request.body
+
+    if (!person.name) {
+        return response.status(400).json({
+            error: 'name is missing'
+        })
+    }
+    if (!person.number) {
+        return response.status(400).json({
+            error: 'number is missing'
+        })
+    }
+    if (persons.find(p => p.name === person.name)) {
+        return response.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+
+    const randomId = Math.floor((Math.random() * 100)) + 5 // I do not want numbers lesser than 5 since the hardcoded array already contains those
     person.id = randomId
 
     persons = persons.concat(person)
