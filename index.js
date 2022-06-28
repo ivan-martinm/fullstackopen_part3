@@ -3,9 +3,19 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
-app.use(morgan('tiny')) // Using tiny predefined format
-// Below is the equivalent using predefined tokens
-//app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+
+morgan.token('personDataToken', (request) =>
+    request.method === 'POST'
+        ? JSON.stringify(
+            {
+                name: request.body.name,
+                number: request.body.number
+            }
+        )
+        : ' '
+)
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :personDataToken'))
 
 let persons = [
     {
