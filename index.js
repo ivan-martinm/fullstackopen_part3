@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
     {
         "id": 1,
@@ -49,6 +51,15 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(person => person.id !== id)
 
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    const randomId = Math.floor((Math.random() * 100)) + 5 // I do not want numbers lesser than 5 since the hardcoded array already contains those
+    const person = request.body
+    person.id = randomId
+
+    persons = persons.concat(person)
+    response.json(person)
 })
 
 const PORT = 3001
