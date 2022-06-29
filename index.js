@@ -3,13 +3,8 @@ const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 
-/* For this step, I also had to modify the baseUrl in the index.js file
- on the frontend 
- from 'http://localhost:3001/persons' to
- 'http://localhost:3001/api/persons' 
-*/
-
 app.use(express.json())
+app.use(express.static('build'))
 app.use(cors())
 
 morgan.token('personDataToken', (request) =>
