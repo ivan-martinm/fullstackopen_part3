@@ -75,29 +75,27 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const person = request.body
+    const body = request.body
 
-    if (!person.name) {
+    if (!body.name) {
         return response.status(400).json({
             error: 'name is missing'
         })
     }
-    if (!person.number) {
+    if (!body.number) {
         return response.status(400).json({
             error: 'number is missing'
         })
     }
-    if (persons.find(p => p.name === person.name)) {
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
 
-    const randomId = Math.floor((Math.random() * 100)) + 5 // I do not want numbers lesser than 5 since the hardcoded array already contains those
-    person.id = randomId
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
 
-    persons = persons.concat(person)
-    response.json(person)
+    person.save().then(savedPerson =>
+        response.json(savedPerson)
+    )
 })
 
 const PORT = process.env.PORT
