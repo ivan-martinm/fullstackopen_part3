@@ -1,13 +1,14 @@
-require('dotenv').config()
 const express = require('express')
+const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+require('dotenv').config()
 const Person = require('./modules/person')
-const app = express()
 
 app.use(express.json())
-app.use(express.static('build'))
 app.use(cors())
+app.use(express.static('build'))
+
 
 morgan.token('personDataToken', (request) =>
     request.method === 'POST'
@@ -22,69 +23,52 @@ morgan.token('personDataToken', (request) =>
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :personDataToken'))
 
-let persons = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    }, {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    }, {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    }, {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-]
-
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => response.json(persons))
 })
 
 app.get('/info', (request, response) => {
-    Person.countDocuments({}).then(count => {
-        response.send(
-            `<p>Phonebook has info for ${count} people</p>
-        <p>${Date()}</p>`
+    Person.countDocuments({})
+        .then(count =>
+            response.send(
+                `<p>Phonebook has info for ${count} people</p>
+                <p>${Date()}</p>`
+            )
         )
-    })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        response.json(person)
-    } else {
-        response.statusMessage = "Person not found"
-        response.status(404).end()
-    }
+app.get('/api/persons/:id', (request, response, next) => {
+    Person.findById(request.params.id)
+        .then(person => response.json(person))
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
-        .then(result => response.status(204).end)
+        .then(result => {
+            if (!result) { // If the person was already removed, result will be null
+                const error = { 
+                    name: 'AlreadyRemoved',
+                    message: 'person already removed from server'
+                }
+                return next(error)
+            } else {
+                response.status(204).end()
+            }
+        })
         .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
-    if (!body.name) {
-        return response.status(400).json({
-            error: 'name is missing'
-        })
-    }
-    if (!body.number) {
-        return response.status(400).json({
-            error: 'number is missing'
-        })
+    if(!body.name || !body.number) {
+        const error = {
+            name: ('InfoMissing'),
+            message: (!body.name ? 'name is missing' : 'number is missing'),
+        }
+        return next(error)
     }
 
     const person = new Person({
@@ -113,16 +97,21 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.name, error.message)
-
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
     }
-
+    if (error.name === 'InfoMissing') {
+        return response.status(400).send({ error: error.message })
+    }
+    if (error.name === 'AlreadyRemoved') { // 
+        return response.status(404).send({ error: error.message })
+        // I am not sure if using 404 is correct here
+    }
     next(error)
 }
 app.use(errorHandler)
 
 const PORT = process.env.PORT
-app.listen(PORT, () => {
+app.listen(PORT, () =>
     console.log(`Server running on port ${PORT}`)
-})
+)

@@ -1,0 +1,17 @@
+### Getting all persons
+GET http://localhost:3001/api/persons
+
+### Getting persons by id
+GET http://localhost:3001/api/persons/62c155944f65efdc6dca23e5
+
+### 
+GET http://localhost:3001/api/persons/62c155994f65efdc6dca23e7
+
+###
+GET http://localhost:3001/api/persons/62c1559a4f65efdc6dca23e9
+
+###
+GET http://localhost:3001/api/persons/62c1559c4f65efdc6dca23eb
+
+### Malformatted id
+GET http://localhost:3001/api/persons/abcde

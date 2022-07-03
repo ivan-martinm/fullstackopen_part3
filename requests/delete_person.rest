@@ -1,1 +1,5 @@
+### Malformatted id
 DELETE http://localhost:3001/api/persons/3
+
+### Correct format
+DELETE http://localhost:3001/api/persons/62c1559c4f65efdc6dca23eb

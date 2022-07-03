@@ -1,10 +1,36 @@
-### Duplicate Person
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
     "name": "Arto Hellas",
-    "number": "246-813579"
+    "number": "040-123456"
+}
+
+### 
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Ada Lovelace",
+    "number": "39-44-5323523"
+}
+
+### 
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Dan Abramov",
+    "number": "12-43-234345"
+}
+
+### 
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Mary Poppendieck",
+    "number": "39-23-6423122"
 }
 
 ### Missing name
@@ -24,32 +50,3 @@ Content-Type: application/json
     "name": "Random person",
     "number": ""
 }
-
-### Correct Persons
-POST http://localhost:3001/api/persons
-Content-Type: application/json
-
-{
-    "name": "Random Person",
-    "number": "135-792468"
-}
-
-###
-POST http://localhost:3001/api/persons
-Content-Type: application/json
-
-{
-    "name": "Random Person2",
-    "number": "246-813579"
-}
-
-###
-POST http://localhost:3001/api/persons
-Content-Type: application/json
-
-{
-    "name": "Random Person3",
-    "number": "132-457689"
-}
-
-
