@@ -6,3 +6,12 @@ Content-Type: application/json
     "name": "Mary Poppendieck",
     "number": "11-11-111111"
 }
+
+### Trying to modify number with an empty one (testing validation)
+PUT http://localhost:3001/api/persons/62c1559c4f65efdc6dca23eb
+Content-Type: application/json
+
+{
+    "name": "Mary Poppendieck",
+    "number": ""
+}

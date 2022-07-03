@@ -1,0 +1,22 @@
+.successMessage {
+    background-color: lightgrey;
+    color: green;
+    font-size: 20px;
+    border-style: solid;
+    border-color: green;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    padding: 12px;
+}
+
+.errorMessage {
+    background-color: lightgrey;
+    color: red;
+    font-size: 20px;
+    border-style: solid;
+    border-color: red;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    padding: 12px;
+    
+}

@@ -63,33 +63,23 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
-    if(!body.name || !body.number) {
-        const error = {
-            name: ('InfoMissing'),
-            message: (!body.name ? 'name is missing' : 'number is missing'),
-        }
-        return next(error)
-    }
-
     const person = new Person({
         name: body.name,
         number: body.number
     })
 
-    person.save().then(savedPerson =>
+    person.save()
+    .then(savedPerson =>
         response.json(savedPerson)
     )
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    const body = request.body
+    const { name, number } = request.body
 
-    const person = {
-        name: body.name,
-        number: body.number
-    }
-
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id, {name, number }, 
+        { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson =>
             response.json(updatedPerson))
         .catch(error => next(error))
@@ -100,10 +90,10 @@ const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
     }
-    if (error.name === 'InfoMissing') {
+    else if (error.name === 'ValidationError') {
         return response.status(400).send({ error: error.message })
     }
-    if (error.name === 'AlreadyRemoved') { // 
+    else if (error.name === 'AlreadyRemoved') { // 
         return response.status(404).send({ error: error.message })
         // I am not sure if using 404 is correct here
     }
