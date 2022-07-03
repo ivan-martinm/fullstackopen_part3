@@ -12,12 +12,17 @@ mongoose.connect(url)
 const personSchema = new mongoose.Schema({
     name: {
         type: String,
-        minLength: 3,
-        required: true
+        minLength: [3, 'name must have at least 3 characters'],
+        required: [true, 'name required']
     },
     number: {
         type: String,
-        required: true
+        validate: {
+            validator: v =>
+            /^\d{2,3}-\d+$/g.test(v) || /^\d{8,}$/g.test(v),
+            message: 'number not valid'
+        },
+        required: [true, 'number required']
     }
 })
 
